@@ -1,5 +1,5 @@
 # libreoffice-appimage
-This script create a appimage version of LibreOffice.
+This script create the appimage version of LibreOffice.
 
 Parameters: 
 version (ex. 5.3.3.1)
