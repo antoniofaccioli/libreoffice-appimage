@@ -1,0 +1,72 @@
+#!/bin/bash -x
+
+# Generate LibreOffice AppImage
+# by Antonio Faccioli
+# Based on script by Simon Peter
+# Released under the Mozilla Public License Version 2.0
+# http://www.libreoffice.org/about-us/licenses/
+
+libreVersion=$1
+arch=$2
+language=$3
+optHelp={$4-N}
+
+if [[ $arch == *"x86-64"* ]] ; then
+	pathArch="x86_64"
+fi
+
+path="https://downloadarchive.documentfoundation.org/libreoffice/old/"$libreVersion"/deb/"$pathArch"/"
+package="LibreOffice_"$libreVersion"_Linux_"$arch"_deb.tar.gz"
+langPackage="LibreOffice_"$libreVersion"_Linux_"$arch"_deb_langpack_"$language".tar.gz"
+helpPackage="LibreOffice_"$libreVersion"_Linux_"$arch"_deb_helppack_"$language".tar.gz"
+
+set +e
+
+APP=LibreOffice
+OOODOWNLOADLINK=$path$package
+VERSION=$libreVersion"."$language
+mkdir -p ./$APP/$APP.AppDir
+cd ./$APP
+
+wget -q https://github.com/probonopd/AppImages/raw/master/functions.sh -O ./functions.sh
+
+sed -i -e 's|VERSION ./appimagetool|VERSION ./appimagetool --comp xz|g' ./functions.sh
+
+. ./functions.sh
+
+wget -c $OOODOWNLOADLINK
+wget -c $path$langPackage
+
+if [[ $optHelp == *"Y"* ]] ; then
+wget -c $path$helpPackage
+fi
+
+for i in *.tar.gz; do tar xfvz $i; done
+
+cd $APP.AppDir/
+
+find ../ -name *.deb -exec dpkg -x \{\} . \;
+
+find . -name startcenter.desktop -exec cp \{\} . \;
+
+sed -i -e 's|Name=.*|Name=LibreOffice|g' startcenter.desktop
+
+find -name *startcenter.png -path *hicolor*48x48* -exec cp \{\} . \;
+
+BINARY=$(cat *.desktop | grep "Exec=" | head -n 1 | cut -d "=" -f 2 | cut -d " " -f 1)
+
+mkdir -p usr/bin/
+cd usr/bin/
+rm ./$BINARY
+find ../../opt -name soffice -path *program* -exec ln -s \{\} ./$BINARY \;
+cd ../../
+
+get_apprun
+
+cd ..
+
+generate_type2_appimage
+
+#cp ../out/LibreOffice* /var/www/html/libreoffice/stable/
+#rm -R ../LibreOffice*
+#rm -R ../out
