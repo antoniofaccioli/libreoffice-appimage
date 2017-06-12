@@ -15,9 +15,17 @@ if [[ $arch == *"x86-64"* ]] ; then
 	pathArch="x86_64"
 fi
 
-path="https://downloadarchive.documentfoundation.org/libreoffice/old/"$libreVersion"/deb/"$pathArch"/"
+#path download package
+pathDownload="http://download.documentfoundation.org/libreoffice/stable/"$libreVersion"/deb/"$pathArch"/"
+pathArchive="https://downloadarchive.documentfoundation.org/libreoffice/old/"$libreVersion"/deb/"$pathArch"/"
+pathPreRelease="http://dev-builds.libreoffice.org/pre-releases/deb/"$pathArch"/"
+pathDaily32="http://dev-builds.libreoffice.org/daily/master/Linux-rpm_deb-x86@71-TDF/current/"
+pathDaily64="http://dev-builds.libreoffice.org/daily/master/Linux-rpm_deb-x86_64@70-TDF/current"
+#name libreoffice package
 package="LibreOffice_"$libreVersion"_Linux_"$arch"_deb.tar.gz"
+#name package lang
 langPackage="LibreOffice_"$libreVersion"_Linux_"$arch"_deb_langpack_"$language".tar.gz"
+#name package help
 helpPackage="LibreOffice_"$libreVersion"_Linux_"$arch"_deb_helppack_"$language".tar.gz"
 
 set +e
