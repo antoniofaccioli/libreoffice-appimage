@@ -11,49 +11,89 @@ arch=$2
 language=$3
 optHelp={$4-N}
 
+standard=(en-GB it ar zh-CN zh-TW fr de ja ko pt pt-BR es ru)
+full=(af am ar as ast be bg bn-IN bn bo br brx bs ca-valencia ca cs cy da de dgo dz el en-GB en-ZA eo es et eu fa fi fr ga gd gl gu gug he hi hr hsb hu id is it ja ka kk km kmr kn ko kok ks lb lo lt lv mai mk ml mn mni mr my nb ne nl nn nr nso oc om or pa-IN pl pt-BR pt qtz ro ru rw sa-IN sat sd si sid sk sl sq sr-Latn sr ss st sv sw-TZ ta te tg th tn tr ts tt ug uk uz ve vec vi xh zh-CN zh-TW zu)
+
 if [[ $arch == *"x86-64"* ]] ; then
 	pathArch="x86_64"
 fi
 
-#path download package
-pathDownload="http://download.documentfoundation.org/libreoffice/stable/"$libreVersion"/deb/"$pathArch"/"
-pathArchive="https://downloadarchive.documentfoundation.org/libreoffice/old/"$libreVersion"/deb/"$pathArch"/"
-pathPreRelease="http://dev-builds.libreoffice.org/pre-releases/deb/"$pathArch"/"
-pathDaily32="http://dev-builds.libreoffice.org/daily/master/Linux-rpm_deb-x86@71-TDF/current/"
-pathDaily64="http://dev-builds.libreoffice.org/daily/master/Linux-rpm_deb-x86_64@70-TDF/current"
-#name libreoffice package
-package="LibreOffice_"$libreVersion"_Linux_"$arch"_deb.tar.gz"
-#name package lang
-langPackage="LibreOffice_"$libreVersion"_Linux_"$arch"_deb_langpack_"$language".tar.gz"
-#name package help
-helpPackage="LibreOffice_"$libreVersion"_Linux_"$arch"_deb_helppack_"$language".tar.gz"
+APP=LibreOffice
 
 set +e
 
-APP=LibreOffice
-OOODOWNLOADLINK=$path$package
-VERSION=$libreVersion"."$language
+if [[ $libreVersion == *"fresh"* ]] ; then
+    nrVersion=$(wget -q "https://www.libreoffice.org/download/libreoffice-fresh/" -O - | grep -o -e "/dl/src/.*/all/" | cut -d "/" -f 4 | head -n 1)
+    path="https://download.documentfoundation.org/libreoffice/stable/"$nrVersion"/deb/"$pathArch"/"
+	package="LibreOffice_"$nrVersion"_Linux_"$arch"_deb.tar.gz"
+elif [[ $libreVersion == *"still"* ]] ; then
+    nrVersion=$(wget -q "https://www.libreoffice.org/download/libreoffice-still/" -O - | grep -o -e "/dl/src/.*/all/" | cut -d "/" -f 4 | head -n 1)
+    path="https://download.documentfoundation.org/libreoffice/stable/"$nrVersion"/deb/"$pathArch"/"
+	package="LibreOffice_"$nrVersion"_Linux_"$arch"_deb.tar.gz"
+else
+    nrVersion=$libreVersion 
+    path="https://downloadarchive.documentfoundation.org/libreoffice/old/"$nrVersion"/deb/"$pathArch"/"
+    package="LibreOffice_"$nrVersion"_Linux_"$arch"_deb.tar.gz"
+fi
+      
+LibODownloadLink=$path$package
+
+if [[ $optHelp == *"Y"* ]] ; then    
+VERSION=$nrVersion"."$language".help"
+else
+VERSION=$nrVersion"."$language
+fi
+
 mkdir -p ./$APP/$APP.AppDir
 cd ./$APP
 
-wget -q https://github.com/probonopd/AppImages/raw/master/functions.sh -O ./functions.sh
+wget -c $LibODownloadLink
 
-sed -i -e 's|VERSION ./appimagetool|VERSION ./appimagetool --comp xz|g' ./functions.sh
-
-. ./functions.sh
-
-wget -c $OOODOWNLOADLINK
-wget -c $path$langPackage
+if [[ $language == *"standard"* ]] ; then
+	for element in ${standard[*]}; 
+        do 
+           langPackage="LibreOffice_"$nrVersion"_Linux_"$arch"_deb_langpack_"$element".tar.gz"
+           wget -c $path$langPackage 
+        done
+elif [[ $language == *"full"* ]] ; then
+	for element in ${full[*]}; 
+        do 
+           langPackage="LibreOffice_"$nrVersion"_Linux_"$arch"_deb_langpack_"$element".tar.gz"
+           wget -c $path$langPackage
+        done
+else
+    langPackage="LibreOffice_"$nrVersion"_Linux_"$arch"_deb_langpack_"$language".tar.gz"
+    wget -c $path$langPackage
+fi
 
 if [[ $optHelp == *"Y"* ]] ; then
-wget -c $path$helpPackage
+    if [[ $language == *"standard"* ]] ; then
+	     for element in ${standard[*]}; 
+             do 
+                helpPackage="LibreOffice_"$nrVersion"_Linux_"$arch"_deb_helppack_"$element".tar.gz"
+                wget -c $path$helpPackage
+         done
+    elif [[ $language == *"full"* ]] ; then
+	     for element in ${full[*]}; 
+             do 
+               helpPackage="LibreOffice_"$nrVersion"_Linux_"$arch"_deb_helppack_"$element".tar.gz"
+               wget -c $path$helpPackage
+         done
+    else
+         HelpPackage="LibreOffice_"$nrVersion"_Linux_"$arch"_deb_langpack_"$language".tar.gz"
+         wget -c $path$helpPackage
+    fi
 fi
+                          
+
 
 for i in *.tar.gz; do tar xfvz $i; done
 
 cd $APP.AppDir/
 
 find ../ -name *.deb -exec dpkg -x \{\} . \;
+
+find . -type f -iname "bootstraprc" -exec sed -i "s|^UserInstallation=.*|UserInstallation=\$SYSUSERCONFIG/libreoffice/$nrVersion|g" {} +
 
 find . -name startcenter.desktop -exec cp \{\} . \;
 
@@ -69,11 +109,22 @@ rm ./$BINARY
 find ../../opt -name soffice -path *program* -exec ln -s \{\} ./$BINARY \;
 cd ../../
 
-get_apprun
+wget -c https://github.com/probonopd/AppImageKit/releases/download/6/AppRun_6-x86_64 -O AppRun # 64-bit
+chmod a+x AppRun
 
 cd ..
 
-generate_type2_appimage
+URL="https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
+wget -c "$URL" -O appimagetool
+chmod a+x ./appimagetool
+set +x
+
+VERSION=$VERSION ./appimagetool --comp xz -v ./$APP.AppDir/
+
+set -x
+mkdir -p ../out/ || true
+mv *.AppImage* ../out/
+
 
 #cp ../out/LibreOffice* /var/www/html/libreoffice/stable/
 #rm -R ../LibreOffice*
