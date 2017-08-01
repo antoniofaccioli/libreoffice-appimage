@@ -80,7 +80,7 @@ if [[ $optHelp == *"Y"* ]] ; then
                wget -c $path$helpPackage
          done
     else
-         HelpPackage="LibreOffice_"$nrVersion"_Linux_"$arch"_deb_langpack_"$language".tar.gz"
+         helpPackage="LibreOffice_"$nrVersion"_Linux_"$arch"_deb_langpack_"$language".tar.gz"
          wget -c $path$helpPackage
     fi
 fi
