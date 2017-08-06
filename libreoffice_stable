@@ -109,7 +109,7 @@ rm ./$BINARY
 find ../../opt -name soffice -path *program* -exec ln -s \{\} ./$BINARY \;
 cd ../../
 
-wget -c https://github.com/probonopd/AppImageKit/releases/download/6/AppRun_6-x86_64 -O AppRun # 64-bit
+wget -c https://github.com/AppImage/AppImageKit/releases/download/continuous/AppRun-x86_64 -O AppRun # 64-bit
 chmod a+x AppRun
 
 cd ..
