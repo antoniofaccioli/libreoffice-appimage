@@ -23,11 +23,11 @@ APP=LibreOffice
 set +e
 
 if [[ $libreVersion == *"fresh"* ]] ; then
-    nrVersion=$(wget -q "https://www.libreoffice.org/download/libreoffice-fresh/" -O - | grep -o -e "/dl/src/.*/all/" | cut -d "/" -f 4 | head -n 1)
+    nrVersion=nrVersion=$(wget -q "https://www.libreoffice.org/download/download" -O - | grep -o -e "/stable/.*/" | cut -d "/" -f 3 | head -n 1)
     path="https://download.documentfoundation.org/libreoffice/stable/"$nrVersion"/deb/"$pathArch"/"
 	package="LibreOffice_"$nrVersion"_Linux_"$arch"_deb.tar.gz"
 elif [[ $libreVersion == *"still"* ]] ; then
-    nrVersion=$(wget -q "https://www.libreoffice.org/download/libreoffice-still/" -O - | grep -o -e "/dl/src/.*/all/" | cut -d "/" -f 4 | head -n 1)
+    nrVersion=$(wget -q "https://www.libreoffice.org/download/download" -O - | grep -o -e "/stable/.*/" | cut -d "/" -f 3 | head -n 3 | tail -n 1)
     path="https://download.documentfoundation.org/libreoffice/stable/"$nrVersion"/deb/"$pathArch"/"
 	package="LibreOffice_"$nrVersion"_Linux_"$arch"_deb.tar.gz"
 else
