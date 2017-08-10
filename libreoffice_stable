@@ -7,8 +7,8 @@
 # http://www.libreoffice.org/about-us/licenses/
 
 pathVersion=$1
-arch=$2
-language=$3
+arch={$2-x86-64}
+language={$3-N}
 optHelp={$4-N}
 
 standard=(en-GB it ar zh-CN zh-TW fr de ja ko pt pt-BR es ru)
