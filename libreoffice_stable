@@ -221,7 +221,7 @@ wget -c "$URL" -O appimagetool
 chmod a+x ./appimagetool
 set +x
 
-VERSION=$VERSION ./appimagetool --comp xz -v ./$APP.AppDir/
+VERSION=$VERSION ./appimagetool -v ./$APP.AppDir/
 
 set -x
 mkdir -p ../out/ || true
