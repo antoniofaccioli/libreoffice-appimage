@@ -10,6 +10,10 @@ pathVersion=$1
 arch="${2:-x86-64}"
 language="${3:-N}"
 optHelp="${4:-N}"
+optSync="${5:-N}"
+
+linkZsync=""
+gpgPass=""
 
 standard=(en-GB it ar zh-CN zh-TW fr de ja ko pt pt-BR es ru)
 full=(af am ar as ast be bg bn-IN bn bo br brx bs ca-valencia ca cs cy da de dgo dz el en-GB en-ZA eo es et eu fa fi fr ga gd gl gu gug he hi hr hsb hu id is it ja ka kk km kmr kn ko kok ks lb lo lt lv mai mk ml mn mni mr my nb ne nl nn nr nso oc om or pa-IN pl pt-BR pt qtz ro ru rw sa-IN sat sd si sid sk sl sq sr-Latn sr ss st sv sw-TZ ta te tg th tn tr ts tt ug uk uz ve vec vi xh zh-CN zh-TW zu)
@@ -95,42 +99,42 @@ set +e
 if [[ $pathVersion == *"fresh"* ]] ; then
     nrVersion=$(wget -q "https://www.libreoffice.org/download/download" -O - | grep -o -e "/stable/.*/" | cut -d "/" -f 3 | head -n 1)
     path="https://download.documentfoundation.org/libreoffice/stable/"$nrVersion"/deb/"$pathArch"/"
-	  package="LibreOffice_"$nrVersion"_Linux_"$arch"_deb.tar.gz"
+    package="LibreOffice_"$nrVersion"_Linux_"$arch"_deb.tar.gz"
 elif [[ $pathVersion == *"still"* ]] ; then
     nrVersion=$(wget -q "https://www.libreoffice.org/download/download" -O - | grep -o -e "/stable/.*/" | cut -d "/" -f 3 | head -n 3 | tail -n 1)
     path="https://download.documentfoundation.org/libreoffice/stable/"$nrVersion"/deb/"$pathArch"/"
-	  package="LibreOffice_"$nrVersion"_Linux_"$arch"_deb.tar.gz"
+    package="LibreOffice_"$nrVersion"_Linux_"$arch"_deb.tar.gz"
 elif [[ $pathVersion == *"daily"* ]] ; then
-		path="http://dev-builds.libreoffice.org/daily/master/Linux-rpm_deb-"$pathArch"@70-TDF/current/"
+    path="http://dev-builds.libreoffice.org/daily/master/Linux-rpm_deb-"$pathArch"@70-TDF/current/"
     package=$(wget -q "$path" -O - | grep -o -e ">mas.*Linux_x86-64_deb.tar.gz" | cut -d ">" -f 2)
     tmpVersion1=$(echo $package | cut -d "_" -f 4)
     tmpVersion2=$(echo $package | cut -d "_" -f 1 | cut -d "~" -f 2)
     nrVersion=$tmpVersion1"_"$tmpVersion2
 else
-	  if [[ $pathVersion == "3."* ]] ; then
-			  nrVersion=$libreVersion
-			  path="https://downloadarchive.documentfoundation.org/libreoffice/old/"$pathVersion"/deb/"$pathArch"/"
-			  package="LibO_"$nrVersion"_Linux_"$arch"_install-deb_en-US.tar.gz"
-		else
+    if [[ $pathVersion == "3."* ]] ; then
+	nrVersion=$libreVersion
+	path="https://downloadarchive.documentfoundation.org/libreoffice/old/"$pathVersion"/deb/"$pathArch"/"
+	package="LibO_"$nrVersion"_Linux_"$arch"_install-deb_en-US.tar.gz"
+    else
         nrVersion=$libreVersion
-				path="https://download.documentfoundation.org/libreoffice/old/"$nrVersion"/deb/"$pathArch"/"
-			  package="LibreOffice_"$nrVersion"_Linux_"$arch"_deb.tar.gz"
-		fi
+	path="https://download.documentfoundation.org/libreoffice/old/"$nrVersion"/deb/"$pathArch"/"
+	package="LibreOffice_"$nrVersion"_Linux_"$arch"_deb.tar.gz"
+    fi
 fi
 
 LibODownloadLink=$path$package
 
 if [[ $optHelp == *"Y"* ]] ; then
 	 if [[ $language != "N" ]] ; then
-		   VERSION=$nrVersion"."$language".help"
-   else
-	     VERSION=$nrVersion".help"
-   fi
+	   VERSION=$nrVersion"."$language".help"
+  	 else
+	   VERSION=$nrVersion".help"
+   	 fi
 else
 	 if [[ $language != "N" ]] ; then
-        VERSION=$nrVersion"."$language
+           VERSION=$nrVersion"."$language
 	 else
-		   VERSION=$nrVersion
+	   VERSION=$nrVersion
 	 fi
 fi
 
@@ -153,13 +157,13 @@ if [[ $language != "N" ]] ; then
                wget -c $path$langPackage
             done
     else
-			  if [[ $pathVersion == "3."* ]] ; then
-					langPackage="LibO_"$nrVersion"_Linux_"$arch"_langpack-deb_"$language".tar.gz"
-					wget -c $path$langPackage
-        else
-					langPackage="LibreOffice_"$nrVersion"_Linux_"$arch"_deb_langpack_"$language".tar.gz"
-          wget -c $path$langPackage
-				fi
+            if [[ $pathVersion == "3."* ]] ; then
+		langPackage="LibO_"$nrVersion"_Linux_"$arch"_langpack-deb_"$language".tar.gz"
+		wget -c $path$langPackage
+            else
+		langPackage="LibreOffice_"$nrVersion"_Linux_"$arch"_deb_langpack_"$language".tar.gz"
+                wget -c $path$langPackage
+	    fi
     fi
 fi
 
@@ -235,13 +239,19 @@ wget -c "$URL" -O appimagetool
 chmod a+x ./appimagetool
 set +x
 
-VERSION=$VERSION ./appimagetool -v ./$APP.AppDir/
+if [[ $optSync == "N" ]] ; then
+	VERSION=$VERSION ./appimagetool -v ./$APP.AppDir/
+else
+    if [[ $language == "N" ]] ; then
+    	VERSION=$pathVersion ./appimagetool -u "zsync|"$linkZsync$APP"-"$pathVersion".AppImage.zsync" -v ./$APP.AppDir/
+    else
+        VERSION=$pathVersion"."$language ./appimagetool -u "zsync|$linkZsync$APP"-"$pathVersion"."$language".AppImage.zsync" -v ./$APP.AppDir/
+    fi
+fi
 
 set -x
+
+for i in $(find . -name "*.AppImage*" -print;); do gpg -b --armor --passphrase "$gpgPass" ${i}; done || true
+
 mkdir -p ../out/ || true
 mv *.AppImage* ../out/
-
-
-#cp ../out/LibreOffice* /var/www/html/libreoffice/stable/
-#rm -R ../LibreOffice*
-#rm -R ../out
