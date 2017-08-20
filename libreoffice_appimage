@@ -11,6 +11,7 @@ arch="${2:-x86-64}"
 language="${3:-N}"
 optHelp="${4:-N}"
 optSync="${5:-N}"
+optSignature="${6:-N}"
 
 linkZsync=""
 gpgPass=""
@@ -251,7 +252,9 @@ fi
 
 set -x
 
-for i in $(find . -name "*.AppImage*" -print;); do gpg -b --armor --passphrase "$gpgPass" ${i}; done || true
+if [[ $language != "N" ]] ; then
+	for i in $(find . -name "*.AppImage*" -print;); do gpg -b --armor --passphrase "$gpgPass" ${i}; done || true
+fi
 
 mkdir -p ../out/ || true
 mv *.AppImage* ../out/
