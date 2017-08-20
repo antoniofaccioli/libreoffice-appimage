@@ -252,7 +252,7 @@ fi
 
 set -x
 
-if [[ $language != "N" ]] ; then
+if [[ $optSygnature == "Y" ]] ; then
 	for i in $(find . -name "*.AppImage*" -print;); do gpg -b --armor --passphrase "$gpgPass" ${i}; done || true
 fi
 
