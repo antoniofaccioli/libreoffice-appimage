@@ -51,3 +51,64 @@ The script takes 6 parameters:
 
 **Example 3:**  **`../make_libreoffice_appimage 3.5.7.2 x86-64 standard Y N N`**
              Build LO v3.5.7.2 AppImage package with a set of selected language-packs, with offline help (for selected languages), not auto-updateable, without signing the package.
+
+## FAQ
+
+**Can I trust this script?**
+
+Check it out. The code is here. If you have a question, ask on IRC in channels [#AppImage](https://webchat.freenode.net/?channels=appimage) or [#libreoffice-appimage](https://webchat.freenode.net/?channels=libreoffice-appimage).
+
+**Can I trust the AppImage, when it runs?**
+
+Do you trust the LibreOffice code you run, if it is installed from RPM or DEB packages? Are you aware, that their respective *pre/postinst* scripts are run by your distro's package manager with *root* privileges? AppImage does not use any root privileges at all!
+
+* If you trust LibreOffice RPMs or DEBs, you implicitely trust the developers of LibreOffice as well as these packagers already to a very high degree.
+
+* The AppImage, once created, contains the very same executable binaries as the respective LibreOffice version which was released by The Document Foundation as a DEB package.
+
+* The DEB packages which served as input to the AppImage packaging toolchain was created by maintainers who are part of the LibreOffice project themselves.
+
+* Yes, a thin layer of additional code that is executed when running the AppImage, the *[AppRun](https://github.com/AppImage/AppImageSpec/blob/master/draft.md#the-apprun-file)*, was created and is maintained by the developers of the [AppImage tools](https://github.com/AppImage). It is also OpenSource. Check it out. Or ask a friend whose technical abilities you trust to check it out.
+
+* One thing you can do, while the AppImage runs:
+  In a terminal, run
+  
+      mount | grep \.mount_Lib
+  
+  This will reveal the (temporary) mount point where the AppImage filesystem is (read-only) mounted while LibreOffice runs. You can move into that directory freely and look around and even copy files to someplace outside the AppImage. Then you can keep investigating them when the AppImage does not run any more, once you closed down LibreOffice....
+  
+**Can I create different versions of LibreOffice AppImages and store them on the same system?**
+
+Yes.
+
+**Can I RUN different versions of LibreOffice AppImages at the same time on the same system?**
+
+Yes.
+
+**How do I get rid of the AppImage again, should I no longer want it?**
+
+Just delete the one AppImage file.
+
+**Where do I have to store the AppImages?**
+
+Store them anywhere you want.
+
+If you like a neat environment, we'd recommend to create a directory such as *`$HOME/AppImages`* and store them all there.
+
+**It's awkward to run an AppImage from the command line with such a long name!**
+
+Is that a question? We agree.
+
+Maybe your distro already created a *`$HOME/bin`* subdirectory and put it in your *`$PATH`*? If not, you can do so yourself.
+
+Then just create a symlink in there by the name of *loffice* (or whatever you like) which points to the exact location of the AppDir: `cd $HOME/bin ;  ln -sf ../AppImages/LibreOffice-<versionstring>-x86_64.AppImage  loffice`.
+
+Then you can start *loffice* to run the AppImage.
+
+**The symlinking stuff is nice, but I want it NICER!**
+
+Check out (the completely OPTIONAL) [AppImageKit](https://github.com/AppImage/AppImageKit).
+
+It contains a few small extra tools to handle AppImages (also to look what's inside, or mount them without running the AppRun).
+
+One of them is *`appimaged`*, a little daemon which automagically discovers new AppImages and creates entries in Desktop menues so you can "click" around your ways. (*`appimaged`* also automagically removes desktop entries for AppImages which you delete.)
