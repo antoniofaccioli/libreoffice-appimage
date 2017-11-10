@@ -49,5 +49,5 @@ The script takes 6 parameters:
 **Example 2:**  **`../make_libreoffice_appimage daily x86-64 de Y Y N`**
              Build LO AppImage package (development version) with German language-pack, with (German) offline help, updateable via zsync, without signing the package.
 
-**Example 3:**  **`../make_libreoffice_appimage 3.5.7.2 x86-64 es Y N N`**
-             Build LO v3.5.7.2 AppImage package with Spanish language-pack, with (Spanish) offline help, not auto-updateable, without signing the package.
+**Example 3:**  **`../make_libreoffice_appimage 3.5.7.2 x86-64 standard Y N N`**
+             Build LO v3.5.7.2 AppImage package with a set of selected language-packs, with offline help (for selected languages), not auto-updateable, without signing the package.
