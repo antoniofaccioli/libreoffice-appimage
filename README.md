@@ -29,12 +29,16 @@ The script takes 6 parameters:
    - `'N'`:  no extra language at all; the package will contain support for the default language only (which is `en-US`).
    
 4. **Fourth:** request to package (or not) the offline help into the bundle. This the offline help language will be the same as selected for the third parameter above:
-   - `'Y'`:  yes, embed the offline help;
-   - `'N'`:  no, do NOT embed the offline help.
+   - `'Y'`:  yes, embed the offline help in the AppImage;
+   - `'N'`:  no, do NOT embed the offline help in the AppImage.
 
-5. **Fifth:**  specify if you want (or not) to be able to make the package updateable. (This additionally creates a *zsync* file, which is used to handle "differential" downloads, so an update does not have to fetch a *complete* AppImage file, but only those byte-ranges which have changed). For this option to work, the [zsync-curl](https://github.com/AppImage/zsync-curl) tool must be present on the system.
+5. **Fifth:**  specify if you want (or not) to be able to make the package updateable. (This additionally creates a *zsync* file, which is used to handle "differential" downloads, so an update does not have to fetch a *complete* AppImage file, but only those byte-ranges which have changed). For this option to work, the [zsync-curl](https://github.com/AppImage/zsync-curl) tool must be present on the system. Possible values are:
+   - `'Y'`:  yes, make the AppImage updateable;
+   - `'N'`:  no, do NOT make the AppImage updateable.
 
-6. **Sixth:** indicate whether you want to sign the created package. You need to install the GPG tool on your system and create your own signature. If you use this function you need to put a fill the (by default empty) `$gpgPass` variable inside the script with the passphrase as its value.
+6. **Sixth:** indicate whether you want to sign the created package. You need to install the GPG tool on your system and create your own signature. If you use this function you need to put a fill the (by default empty) `$gpgPass` variable inside the script with the passphrase as its value. Possible values are:
+   - `'Y'`:  yes, sign the AppImage;
+   - `'N'`:  no, do NOT sign the AppImage.
 
 
 ## Examples
