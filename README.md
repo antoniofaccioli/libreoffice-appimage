@@ -1,5 +1,5 @@
-# `make-libreoffice-appimage`
-## (Re-package official LibreOffice binaries into the AppImage format)
+# `make_libreoffice_appimage`
+## (Re-package official LibreOffice .deb packages into the AppImage format)
 
 This script creates an AppImage package for any version of LibreOffice.
 
