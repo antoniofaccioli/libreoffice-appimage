@@ -103,7 +103,7 @@ Maybe your distro already created a *`$HOME/bin`* subdirectory and put it in you
 
 Then just create a symlink in there by the name of *loffice* (or whatever you like) which points to the exact location of the AppDir: `cd $HOME/bin ;  ln -sf ../AppImages/LibreOffice-<versionstring>-x86_64.AppImage  loffice`.
 
-Then you can start *loffice* to run the AppImage.
+Now you can type *loffice* to run the AppImage.
 
 **The symlinking stuff is nice, but I want it NICER!**
 
