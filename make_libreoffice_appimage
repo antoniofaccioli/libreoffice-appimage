@@ -2,6 +2,7 @@
 
 # Generate LibreOffice AppImage
 # by Antonio Faccioli
+# Added 'Usage' message and basic 'check' functions by Kurt Pfeifle
 # Based on script by Simon Peter
 # Released under the Mozilla Public License Version 2.0
 # http://www.libreoffice.org/about-us/licenses/
