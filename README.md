@@ -30,7 +30,8 @@ The script takes 6 parameters:
    
 4. **Fourth:** request to package (or not) the offline help into the bundle. This the offline help language will be the same as selected for the third parameter above:
    - `'Y'`:  yes, embed the offline help in the AppImage;
-   - `'N'`:  no, do NOT embed the offline help in the AppImage.
+   - `'N'`:  no, do NOT embed the offline help in the AppImage.    
+<sub>(Note: at this time the bundling of offline help into AppImages from the *'`daily`'* channel are not supported. A `'Y'` in this case will build an AppImage without the offline help.)</sub>
 
 5. **Fifth:**  specify if you want (or not) to be able to make the package updateable. (This additionally creates a *zsync* file, which is used to handle "differential" downloads, so an update does not have to fetch a *complete* AppImage file, but only those byte-ranges which have changed). For this option to work, the [zsync-curl](https://github.com/AppImage/zsync-curl) tool must be present on the system. Possible values are:
    - `'Y'`:  yes, make the AppImage updateable;
