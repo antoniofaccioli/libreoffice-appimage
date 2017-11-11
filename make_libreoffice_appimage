@@ -6,6 +6,152 @@
 # Released under the Mozilla Public License Version 2.0
 # http://www.libreoffice.org/about-us/licenses/
 
+argv0="${0}"
+argv1="${1}"
+argv2="${2}"
+argv3="${3}"
+argv4="${4}"
+argv5="${5}"
+argv6="${6}"
+
+# Describe usage:
+usage() {
+    echo ""
+    echo " Build an \"single-file\" AppImage executable for any (arbitrary) version of LibreOffice from The Document Foundation's official binary Debian package."
+    echo ""
+    echo " Usage:  ${argv0}  <version>  <arch>  <lang>  <help-yesno>  <zsync-yesno>  <sign-yesno>"
+    echo ""
+    echo "   where:"
+    echo "             <version>: 'fresh':   build from 'fresh' release channel (i.e. the latest official release)"
+    echo "                        'still':   build from 'still' release channel (i.e. the previous official release)"
+    echo "                        'daily':   build from 'daily' release channel (i.e. the current hot-of-the-stove development branch)"
+    echo "                      'n.m.o.p':   for example use '5.4.3.2'"
+    echo ""
+    echo "             <arch>:    'x86-64'   (only one currently supported -- 32bit doesn't work yet)"
+    echo ""
+    echo "             <lang>: 'standard':   includes en-GB, it, ar, zh-CN, zh-TW, fr, de, ja, ko, pt, pt-BR, es, ru language-packs"
+    echo "                         'full':   includes all available language-packs (for some releases more than 113 different ones!)"
+    echo "                            'N':   no extra language-pack (LibreOffice comes with default 'en-US')"
+    echo "                       <single>:   includes the named language-pack (for example 'de', 'it' or 'es')"
+    echo ""
+    echo "             <help-yesno>:  'Y' or 'N' (Yes/No to include online help -- depends on the previous '<lang>' parameter)"
+    echo ""
+    echo "             <zsync-yesno>: 'Y' or 'N' (Yes/No to include capability for updating the AppImage with the help of 'AppImageUpdate')"
+    echo ""
+    echo "             <sign-yesno>:  'Y' or 'N' (Yes/No to include a GPG signature)"
+    echo ""
+    echo "   Example:  \"${argv0} still x86-64 it N N N\""
+    echo "             Build LO AppImage package with Italian language-pack, without offline help, not auto-updateable, without signing the package."
+    echo ""
+    echo "   Example:  \"${argv0} daily x86-64 de Y Y N\""
+    echo "             Build LO AppImage package (development version) with German language-pack, with (German) offline help, updateable via zsync, without signing the package."
+    echo ""
+    echo "   Example:  \"${argv0} 3.5.7.2 x86-64 es Y N N\""
+    echo "             Build LO v3.5.7.2 AppImage package with Spanish language-pack, with (Spanish) offline help, not auto-updateable, without signing the package."
+    echo ""
+}
+
+
+check() {   # This is not a complete, but only a limited sanity check of the inputs
+    case $argv1 in
+        fresh|still|daily|3.*|4.*|5.*|6.*)
+            # Do nothing, accepted!
+            echo -e "\nBuilding LibreOffice AppImage from \"${argv1}\" channel or release:"
+            ;;
+        *)
+            echo -e "\n  ==> Argument no.1 must be either 'fresh', 'still', 'daily' or a specific LibreOffice version number released by The Document Foundation. <=="
+            echo "For correct usage of ${argv0} please see below:"
+            echo ""
+            usage
+            exit 0
+            ;;
+    esac
+    case $argv2 in
+        x86-64)
+            # Do nothing, accepted!
+            echo "    -- for architecture \"${argv2}\";"
+            ;;
+        *)
+            echo "==> Wrong or unsupported architecture ${argv2} in argument no.2 -- must be 'x86-64' ('x86' is currently not supported). <=="
+            echo "For correct usage of ${argv0} please see below:"
+            echo ""
+            usage
+            exit 0
+            ;;
+    esac
+    case $argv3 in
+        standard|full)
+            echo "    -- with localization language(es) \"${argv3}\";"
+            ;;
+        N)
+            echo "    -- without any extra localization language;"
+            ;;
+        af|am|ar|as|ast|be|bg|bn-IN|bn|bo|br|brx|bs|ca-valencia|ca|cs|cy|da|de|dgo|dz|el|en-GB|en-ZA|eo|es|et|eu|fa|fi|fr|ga|gd|gl|gu|gug|he|hi|hr|hsb|hu|id|is|it|ja|ka|kk|km|kmr|kn|ko|kok|ks|lb|lo|lt|lv|mai|mk|ml|mn|mni|mr|my|nb|ne|nl|nn|nr|nso|oc|om|or|pa-IN|pl|pt-BR|pt|qtz|ro|ru|rw|sa-IN|sat|sd|si|sid|sk|sl|sq|sr-Latn|sr|ss|st|sv|sw-TZ|ta|te|tg|th|tn|tr|ts|tt|ug|uk|uz|ve|vec|vi|xh|zh-CN|zh-TW|zu)
+            echo "    -- with localization language \"${argv3}\";"
+            ;;
+        *)
+            echo "==> Wrong or unsupported language request ${argv3} in argument no.3. <=="
+            echo "For correct usage of ${argv0} please see below:"
+            echo ""
+            usage
+            exit 0
+            ;;
+    esac
+    case $argv4 in
+        Y|N)
+            # Do nothing, accepted!
+            echo "    -- include online help = \"${argv4}\";"
+            ;;
+        *)
+            echo "==> Wrong argument ${argv4} at position no.4! (Must be either 'Y' or 'N' to include offline help or not... <=="
+            echo "For correct usage of ${argv0} please see below:"
+            echo ""
+            usage
+            exit 0
+            ;;
+    esac
+    case $argv5 in
+        Y|N)
+            # Do nothing, accepted!
+            echo "    -- include AppImage zsync updatability feature = \"${argv4}\";"
+            ;;
+        *)
+            echo "==> Wrong argument ${argv5} at position no.5! (Must be either 'Y' or 'N' to include update functions or not... <=="
+            echo "For correct usage of ${argv0} please see below:"
+            echo ""
+            usage
+            exit 0
+            ;;
+    esac
+    case $argv6 in
+        Y|N)
+            # Do nothing, accepted!
+            echo "    -- with signature for package = \"${argv4}\";"
+            ;;
+        *)
+            echo "==> Wrong argument ${argv6} at position no. 6! (Must be either 'Y' or 'N' to include a signature or not... <=="
+            echo "For correct usage of ${argv0} please see below:"
+            echo ""
+            usage
+            exit 0
+            ;;
+    esac
+}
+
+# Check number of arguments:
+case $# in
+    6)
+        check
+        ;;
+    0|1|2|3|4|5|*)
+        echo "==> Wrong number of arguments! (Used: ${#}) <=="
+        echo "For correct usage of ${argv0} please see below:"
+        echo ""
+        usage
+        exit 0
+        ;;
+esac
+
 pathVersion=$1
 arch="${2:-x86-64}"
 language="${3:-N}"
@@ -244,9 +390,9 @@ if [[ $optSync == "N" ]] ; then
 	VERSION=$VERSION ./appimagetool -v ./$APP.AppDir/
 else
     if [[ $language == "N" ]] ; then
-    	VERSION=$pathVersion ./appimagetool -u "zsync|"$linkZsync$APP"-"$pathVersion".AppImage.zsync" -v ./$APP.AppDir/
+    	VERSION="$pathVersion" ./appimagetool -u zsync|"$linkZsync$APP"-"$pathVersion".AppImage.zsync -v ./$APP.AppDir/
     else
-        VERSION=$pathVersion"."$language ./appimagetool -u "zsync|$linkZsync$APP"-"$pathVersion"."$language".AppImage.zsync" -v ./$APP.AppDir/
+        VERSION="$pathVersion"."$language" ./appimagetool -u zsync|"$linkZsync$APP"-"$pathVersion"."$language".AppImage.zsync -v ./$APP.AppDir/
     fi
 fi
 
