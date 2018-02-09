@@ -19,8 +19,7 @@ The script takes 6 parameters:
    Values can be 'fresh', 'still', 'daily' or the specific (existing) version number (like '5.4.2.2').
 
 2. **Second:** determine if the requested version of LibreOffice is 32 or 64 bits.
-   At this time this parameter MUST be 'x86-64'(so only 64 bit), because AppImage does not (yet) support 32 bit.
-   (So this parameter is there to support the possible future use of 32bit.)
+   This parameter can be 'x86' (for 32-bit) or 'x86-64' (for 64-bit).
 
 3. **Third:** request the language pack(s) you want to use with LibreOffice. The following values may be submitted:
    - `'standard'`: creates a package with a set of pre-defined languages, namely: *en-GB, it, ar, zh-CN, zh-TW, fr, de, ja, ko, pt, pt-BR, es, ru*;

@@ -28,7 +28,8 @@ usage() {
     echo "                        'daily':   build from 'daily' release channel (i.e. the current hot-of-the-stove development branch)"
     echo "                      'n.m.o.p':   for example use '5.4.3.2'"
     echo ""
-    echo "             <arch>:    'x86-64'   (only one currently supported -- 32bit doesn't work yet)"
+    echo "             <arch>:      'x86':   package 32-bit binaries"
+    echo "                       'x86-64':   package 64-bit binaries"
     echo ""
     echo "             <lang>: 'standard':   includes en-GB, it, ar, zh-CN, zh-TW, fr, de, ja, ko, pt, pt-BR, es, ru language-packs"
     echo "                         'full':   includes all available language-packs (for some releases more than 113 different ones!)"
@@ -68,12 +69,12 @@ check() {   # This is not a complete, but only a limited sanity check of the inp
             ;;
     esac
     case $argv2 in
-        x86-64)
+        x86|x86-64)
             # Do nothing, accepted!
             echo "    -- for architecture \"${argv2}\";"
             ;;
         *)
-            echo "==> Wrong or unsupported architecture ${argv2} in argument no.2 -- must be 'x86-64' ('x86' is currently not supported). <=="
+            echo "==> Wrong or unsupported architecture ${argv2} in argument no.2 -- must be 'x86' or 'x86-64'. <=="
             echo "For correct usage of ${argv0} please see below:"
             echo ""
             usage
@@ -168,6 +169,10 @@ full=(af am ar as ast be bg bn-IN bn bo br brx bs ca-valencia ca cs cy da de dgo
 
 if [[ $arch == *"x86-64"* ]] ; then
     pathArch="x86_64"
+    appimageArch="x86_64"
+elif [[ $arch == "x86" ]] ; then
+	pathArch="x86"
+	appimageArch="i686"
 fi
 
 if [[ $pathVersion == *"daily"* ]] ; then
@@ -377,12 +382,12 @@ rm ./$BINARY
 find ../../opt -name soffice -path *program* -exec ln -s \{\} ./$BINARY \;
 cd ../../
 
-wget -c https://github.com/AppImage/AppImageKit/releases/download/continuous/AppRun-x86_64 -O AppRun # 64-bit
+wget -c https://github.com/AppImage/AppImageKit/releases/download/continuous/AppRun-$appimageArch -O AppRun
 chmod a+x AppRun
 
 cd ..
 
-URL="https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
+URL="https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-${appimageArch}.AppImage"
 wget -c "$URL" -O appimagetool
 chmod a+x ./appimagetool
 set +x
