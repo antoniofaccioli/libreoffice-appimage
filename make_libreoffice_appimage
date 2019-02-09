@@ -289,7 +289,7 @@ else
 	 if [[ $language != "N" ]] ; then
            VERSION="{$nrVersion}.$language"
 	 else
-	   VERSION={$nrVersion}
+	   VERSION=$nrVersion
 	 fi
 fi
 
