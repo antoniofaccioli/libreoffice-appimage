@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # Generate LibreOffice AppImage
 # by Antonio Faccioli
@@ -6,6 +6,8 @@
 # Based on script by Simon Peter
 # Released under the Mozilla Public License Version 2.0
 # http://www.libreoffice.org/about-us/licenses/
+
+set -x
 
 argv0="${0}"
 argv1="${1}"
@@ -292,7 +294,7 @@ else
 fi
 
 mkdir -p ./$APP/$APP.AppDir
-cd ./$APP
+cd ./$APP || exit
 
 wget -c $LibODownloadLink
 
@@ -358,7 +360,7 @@ fi
 
 for i in *.tar.gz; do tar xfvz $i; done
 
-cd $APP.AppDir/
+cd $APP.AppDir/ || exit
 
 find ../ -name *.deb -exec dpkg -x \{\} . \;
 
@@ -372,20 +374,20 @@ else
     sed -i -e 's|Name=.*|Name=LibreOffice|g' startcenter.desktop
 fi
 
-find -name *startcenter.png -path *hicolor*48x48* -exec cp \{\} . \;
+find . -name *startcenter.png -path *hicolor*48x48* -exec cp \{\} . \;
 
 BINARY=$(cat *.desktop | grep "Exec=" | head -n 1 | cut -d "=" -f 2 | cut -d " " -f 1)
 
 mkdir -p usr/bin/
-cd usr/bin/
+cd usr/bin/ || exit
 rm ./$BINARY
 find ../../opt -name soffice -path *program* -exec ln -s \{\} ./$BINARY \;
-cd ../../
+cd ../../ || exit
 
 wget -c https://github.com/AppImage/AppImageKit/releases/download/continuous/AppRun-$appimageArch -O AppRun
 chmod a+x AppRun
 
-cd ..
+cd .. || exit
 
 URL="https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-${appimageArch}.AppImage"
 wget -c "$URL" -O appimagetool
@@ -404,7 +406,7 @@ fi
 
 set -x
 
-if [[ $optSygnature == "Y" ]] ; then
+if [[ $optSignature == "Y" ]] ; then
 	for i in $(find . -name "*.AppImage*" -print;); do gpg -b --armor --passphrase "$gpgPass" ${i}; done || true
 fi
 
