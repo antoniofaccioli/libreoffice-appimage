@@ -253,14 +253,14 @@ set +e
 
 if [[ $pathVersion == *"fresh"* ]] ; then
     nrVersion=$(wget -q "https://www.libreoffice.org/download/download" -O - | grep -o -e "/stable/.*/" | cut -d "/" -f 3 | head -n 1)
-    path="https://download.documentfoundation.org/libreoffice/stable/$nrVersion/deb/$pathArch/"
+    path="https://download.documentfoundation.org/libreoffice/stable/{$nrVersion}/deb/{$pathArch}/"
     package="LibreOffice_{$nrVersion}_Linux_{$arch}_deb.tar.gz"
 elif [[ $pathVersion == *"still"* ]] ; then
     nrVersion=$(wget -q "https://www.libreoffice.org/download/download" -O - | grep -o -e "/stable/.*/" | cut -d "/" -f 3 | head -n 3 | tail -n 1)
-    path="https://download.documentfoundation.org/libreoffice/stable/$nrVersion/deb/$pathArch/"
+    path="https://download.documentfoundation.org/libreoffice/stable/{$nrVersion}/deb/{$pathArch}/"
     package="LibreOffice_{$nrVersion}_Linux_{$arch}_deb.tar.gz"
 elif [[ $pathVersion == *"daily"* ]] ; then
-    path="http://dev-builds.libreoffice.org/daily/master/Linux-rpm_deb-$pathArch@70-TDF/current/"
+    path="http://dev-builds.libreoffice.org/daily/master/Linux-rpm_deb-{$pathArch}@70-TDF/current/"
     package=$(wget -q "$path" -O - | grep -o -e ">mas.*Linux_x86-64_deb.tar.gz" | cut -d ">" -f 2)
     tmpVersion1=$(echo "$package" | cut -d "_" -f 4)
     tmpVersion2=$(echo "$package" | cut -d "_" -f 1 | cut -d "~" -f 2)
@@ -268,11 +268,11 @@ elif [[ $pathVersion == *"daily"* ]] ; then
 else
     if [[ $pathVersion == "3."* ]] ; then
 	nrVersion=$libreVersion
-	path="https://downloadarchive.documentfoundation.org/libreoffice/old/$pathVersion/deb/$pathArch/"
+	path="https://downloadarchive.documentfoundation.org/libreoffice/old/$pathVersion/deb/{$pathArch}/"
 	package="LibO_{$nrVersion}_Linux_{$arch}_install-deb_en-US.tar.gz"
     else
         nrVersion=$libreVersion
-	path="https://download.documentfoundation.org/libreoffice/old/$nrVersion/deb/$pathArch/"
+	path="https://download.documentfoundation.org/libreoffice/old/{$nrVersion}/deb/{$pathArch}/"
 	package="LibreOffice_{$nrVersion}_Linux_{$arch}_deb.tar.gz"
     fi
 fi
@@ -281,15 +281,15 @@ LibODownloadLink=$path$package
 
 if [[ $optHelp == *"Y"* ]] ; then
 	 if [[ $language != "N" ]] ; then
-	   VERSION="$nrVersion.$language.help"
+	   VERSION="{$nrVersion}.$language.help"
   	 else
-	   VERSION="$nrVersion.help"
+	   VERSION="{$nrVersion}.help"
    	 fi
 else
 	 if [[ $language != "N" ]] ; then
-           VERSION="$nrVersion.$language"
+           VERSION="{$nrVersion}.$language"
 	 else
-	   VERSION=$nrVersion
+	   VERSION={$nrVersion}
 	 fi
 fi
 
