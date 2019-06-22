@@ -117,7 +117,7 @@ check() {   # This is not a complete, but only a limited sanity check of the inp
     case $argv5 in
         Y|N)
             # Do nothing, accepted!
-            echo "    -- include AppImage zsync updatability feature = \"${argv4}\";"
+            echo "    -- include AppImage zsync updatability feature = \"${argv5}\";"
             ;;
         *)
             echo "==> Wrong argument ${argv5} at position no.5! (Must be either 'Y' or 'N' to include update functions or not... <=="
@@ -130,7 +130,7 @@ check() {   # This is not a complete, but only a limited sanity check of the inp
     case $argv6 in
         Y|N)
             # Do nothing, accepted!
-            echo "    -- with signature for package = \"${argv4}\";"
+            echo "    -- with signature for package = \"${argv6}\";"
             ;;
         *)
             echo "==> Wrong argument ${argv6} at position no. 6! (Must be either 'Y' or 'N' to include a signature or not... <=="
