@@ -117,7 +117,7 @@ check() {   # This is not a complete, but only a limited sanity check of the inp
     case $argv5 in
         Y|N)
             # Do nothing, accepted!
-            echo "    -- include AppImage zsync updatability feature = \"${argv4}\";"
+            echo "    -- include AppImage zsync updatability feature = \"${argv5}\";"
             ;;
         *)
             echo "==> Wrong argument ${argv5} at position no.5! (Must be either 'Y' or 'N' to include update functions or not... <=="
@@ -130,7 +130,7 @@ check() {   # This is not a complete, but only a limited sanity check of the inp
     case $argv6 in
         Y|N)
             # Do nothing, accepted!
-            echo "    -- with signature for package = \"${argv4}\";"
+            echo "    -- with signature for package = \"${argv6}\";"
             ;;
         *)
             echo "==> Wrong argument ${argv6} at position no. 6! (Must be either 'Y' or 'N' to include a signature or not... <=="
@@ -253,14 +253,14 @@ set +e
 
 if [[ $pathVersion == *"fresh"* ]] ; then
     nrVersion=$(wget -q "https://www.libreoffice.org/download/download" -O - | grep -o -e "/stable/.*/" | cut -d "/" -f 3 | head -n 1)
-    path="https://download.documentfoundation.org/libreoffice/stable/{$nrVersion}/deb/{$pathArch}/"
-    package="LibreOffice_{$nrVersion}_Linux_{$arch}_deb.tar.gz"
+    path="https://download.documentfoundation.org/libreoffice/stable/${nrVersion}/deb/${pathArch}/"
+    package="LibreOffice_${nrVersion}_Linux_${arch}_deb.tar.gz"
 elif [[ $pathVersion == *"still"* ]] ; then
     nrVersion=$(wget -q "https://www.libreoffice.org/download/download" -O - | grep -o -e "/stable/.*/" | cut -d "/" -f 3 | head -n 3 | tail -n 1)
-    path="https://download.documentfoundation.org/libreoffice/stable/{$nrVersion}/deb/{$pathArch}/"
-    package="LibreOffice_{$nrVersion}_Linux_{$arch}_deb.tar.gz"
+    path="https://download.documentfoundation.org/libreoffice/stable/${nrVersion}/deb/${pathArch}/"
+    package="LibreOffice_${nrVersion}_Linux_${arch}_deb.tar.gz"
 elif [[ $pathVersion == *"daily"* ]] ; then
-    path="http://dev-builds.libreoffice.org/daily/master/Linux-rpm_deb-{$pathArch}@70-TDF/current/"
+    path="http://dev-builds.libreoffice.org/daily/master/Linux-rpm_deb-${pathArch}@70-TDF/current/"
     package=$(wget -q "$path" -O - | grep -o -e ">mas.*Linux_x86-64_deb.tar.gz" | cut -d ">" -f 2)
     tmpVersion1=$(echo "$package" | cut -d "_" -f 4)
     tmpVersion2=$(echo "$package" | cut -d "_" -f 1 | cut -d "~" -f 2)
@@ -268,12 +268,12 @@ elif [[ $pathVersion == *"daily"* ]] ; then
 else
     if [[ $pathVersion == "3."* ]] ; then
 	nrVersion=$libreVersion
-	path="https://downloadarchive.documentfoundation.org/libreoffice/old/$pathVersion/deb/{$pathArch}/"
-	package="LibO_{$nrVersion}_Linux_{$arch}_install-deb_en-US.tar.gz"
+	path="https://downloadarchive.documentfoundation.org/libreoffice/old/$pathVersion/deb/${pathArch}/"
+	package="LibO_${nrVersion}_Linux_${arch}_install-deb_en-US.tar.gz"
     else
         nrVersion=$libreVersion
-	path="https://download.documentfoundation.org/libreoffice/old/{$nrVersion}/deb/{$pathArch}/"
-	package="LibreOffice_{$nrVersion}_Linux_{$arch}_deb.tar.gz"
+	path="https://download.documentfoundation.org/libreoffice/old/${nrVersion}/deb/${pathArch}/"
+	package="LibreOffice_${nrVersion}_Linux_${arch}_deb.tar.gz"
     fi
 fi
 
@@ -281,13 +281,13 @@ LibODownloadLink=$path$package
 
 if [[ $optHelp == *"Y"* ]] ; then
 	 if [[ $language != "N" ]] ; then
-	   VERSION="{$nrVersion}.$language.help"
+	   VERSION="${nrVersion}.$language.help"
   	 else
-	   VERSION="{$nrVersion}.help"
+	   VERSION="${nrVersion}.help"
    	 fi
 else
 	 if [[ $language != "N" ]] ; then
-           VERSION="{$nrVersion}.$language"
+           VERSION="${nrVersion}.$language"
 	 else
 	   VERSION=$nrVersion
 	 fi
@@ -302,21 +302,21 @@ if [[ $language != "N" ]] ; then
     if [[ $language == *"standard"* ]] ; then
 	    for element in ${standard[*]};
             do
-               langPackage="LibreOffice_{$nrVersion}_Linux_{$arch}_deb_langpack_$element.tar.gz"
+               langPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_langpack_$element.tar.gz"
                wget -c "$path$langPackage"
             done
     elif [[ $language == *"full"* ]] ; then
 	    for element in ${full[*]};
             do
-               langPackage="LibreOffice_{$nrVersion}_Linux_{$arch}_deb_langpack_$element.tar.gz"
+               langPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_langpack_$element.tar.gz"
                wget -c "$path$langPackage"
             done
     else
             if [[ $pathVersion == "3."* ]] ; then
-		langPackage="LibO_{$nrVersion}_Linux_{$arch}_langpack-deb_{$language}.tar.gz"
+		langPackage="LibO_${nrVersion}_Linux_${arch}_langpack-deb_${language}.tar.gz"
 		wget -c "$path$langPackage"
             else
-		langPackage="LibreOffice_{$nrVersion}_Linux_{$arch}_deb_langpack_{$language}.tar.gz"
+		langPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_langpack_${language}.tar.gz"
                 wget -c "$path$langPackage"
 	    fi
     fi
@@ -326,30 +326,30 @@ if [[ $optHelp == *"Y"* ]] ; then
     if [[ $language == *"standard"* ]] ; then
 	     for element in ${standard[*]};
              do
-                helpPackage="LibreOffice_{$nrVersion}_Linux_{$arch}_deb_helppack_$element.tar.gz"
+                helpPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_helppack_$element.tar.gz"
                 wget -c "$path$helpPackage"
          done
     elif [[ $language == *"full"* ]] ; then
 	     for element in ${full[*]};
              do
-               helpPackage="LibreOffice_{$nrVersion}_Linux_{$arch}_deb_helppack_$element.tar.gz"
+               helpPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_helppack_$element.tar.gz"
                wget -c "$path$helpPackage"
          done
     else
 			 if [[ $pathVersion == "3."* ]] ; then
            if [[ $language != "N" ]] ; then
-						   helpPackage="LibO_{$nrVersion}_Linux_{$arch}_helppack-deb_{$language}.tar.gz"
+						   helpPackage="LibO_${nrVersion}_Linux_${arch}_helppack-deb_${language}.tar.gz"
 						   wget -c "$path$helpPackage"
 				   else
-						   helpPackage="LibO_{$nrVersion}_Linux_{$arch}_helppack-deb_en-US.tar.gz"
+						   helpPackage="LibO_${nrVersion}_Linux_${arch}_helppack-deb_en-US.tar.gz"
 						   wget -c "$path$helpPackage"
 					 fi
 			 else
 				   if [[ $language != "N" ]] ; then
-						   helpPackage="LibreOffice_{$nrVersion}_Linux_{$arch}_deb_helppack_{$language}.tar.gz"
+						   helpPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_helppack_${language}.tar.gz"
 						   wget -c "$path$helpPackage"
 				   else
-						   helpPackage="LibreOffice_{$nrVersion}_Linux_{$arch}_deb_helppack_en-US.tar.gz"
+						   helpPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_helppack_en-US.tar.gz"
 						   wget -c "$path""$helpPackage"
 					 fi
 			 fi
