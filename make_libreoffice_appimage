@@ -156,6 +156,42 @@ case $# in
         ;;
 esac
 
+declare -A master_builds
+
+function todate() {
+    # change the date to Unix timestamp
+    local datestring="TZ=\"UTC\" ${1}"
+    date -d "$datestring" +%s
+}
+
+function newestmaster() {
+    # Compare the dates as timestamps to find the newest one
+    # Access associative array with a name reference
+    # Key is relative path to file, value is date
+    local -n ar=$1
+    local max=0
+    local filepath=""    
+    for i in "${!ar[@]}" ; do
+        timestamp=$(todate "${ar[$i]}")
+        (("$timestamp" > max)) && max="$timestamp" && filepath="$i"
+    done
+    echo "$filepath"
+}
+
+function filtermasters() {
+    # Read a page listing the actually available builds
+    local current_masters=$(wget -q "https://dev-builds.libreoffice.org/daily/master/current.html" -O -)
+    # Put all the Linux build links into an array, but filter out any debug or rpm archives
+    mapfile -t master_links < <( grep -oP -e '<a href="\.\/Linux.*</a>' <<< "$current_masters" | grep -vE 'dbg|rpm\.tar\.gz' )
+    # Add relative file paths and dates into an associative array
+    for link in "${master_links[@]}"; do
+        key=$(grep -oP -e '(?<=<a href="\.\/)Linux.*(?=">)' <<< "$link")
+        value=$(grep -oP -e "(?<=<a href=\"\.\/${key}\">).*(?=<\/a>)" <<< "$link")
+        master_builds[$key]=$value
+    done
+    newestmaster master_builds
+}
+
 pathVersion=$1
 arch="${2:-x86-64}"
 language="${3:-N}"
@@ -260,10 +296,12 @@ elif [[ $pathVersion == *"still"* ]] ; then
     path="https://download.documentfoundation.org/libreoffice/stable/${nrVersion}/deb/${pathArch}/"
     package="LibreOffice_${nrVersion}_Linux_${arch}_deb.tar.gz"
 elif [[ $pathVersion == *"daily"* ]] ; then
-    path="http://dev-builds.libreoffice.org/daily/master/Linux-rpm_deb-${pathArch}@70-TDF/current/"
-    package=$(wget -q "$path" -O - | grep -o -e ">mas.*Linux_x86-64_deb.tar.gz" | cut -d ">" -f 2)
-    tmpVersion1=$(echo "$package" | cut -d "_" -f 4)
-    tmpVersion2=$(echo "$package" | cut -d "_" -f 1 | cut -d "~" -f 2)
+    path="https://dev-builds.libreoffice.org/daily/master/"
+    package=$(filtermasters)
+    tmpVersion1="${package%_Linux_x86-64_deb.tar.gz}"
+    tmpVersion1="${tmpVersion1##*LibreOfficeDev_}"
+    tmpVersion2="${package%_[[:digit:]][[:digit:]].*}"
+    tmpVersion2="${tmpVersion2##*master~}"
     nrVersion=$tmpVersion1"_"$tmpVersion2
 else
     if [[ $pathVersion == "3."* ]] ; then
