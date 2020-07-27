@@ -337,26 +337,31 @@ cd ./$APP || exit
 wget -c "$LibODownloadLink"
 
 if [[ $language != "N" ]] ; then
+    if [[ $pathVersion == *"daily"* ]] ; then
+        nameStart="${package%.tar.gz}_langpack_"
+    else
+        nameStart="LibreOffice_${nrVersion}_Linux_${arch}_deb_langpack_"
+    fi
     if [[ $language == *"standard"* ]] ; then
-	    for element in ${standard[*]};
+        for element in ${standard[*]};
             do
-               langPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_langpack_$element.tar.gz"
+               langPackage="$nameStart$element.tar.gz"
                wget -c "$path$langPackage"
             done
     elif [[ $language == *"full"* ]] ; then
-	    for element in ${full[*]};
+        for element in ${full[*]};
             do
-               langPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_langpack_$element.tar.gz"
+               langPackage="$nameStart$element.tar.gz"
                wget -c "$path$langPackage"
             done
     else
-            if [[ $pathVersion == "3."* ]] ; then
-		langPackage="LibO_${nrVersion}_Linux_${arch}_langpack-deb_${language}.tar.gz"
-		wget -c "$path$langPackage"
-            else
-		langPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_langpack_${language}.tar.gz"
-                wget -c "$path$langPackage"
-	    fi
+        if [[ $pathVersion == "3."* ]] ; then
+            langPackage="LibO_${nrVersion}_Linux_${arch}_langpack-deb_${language}.tar.gz"
+            wget -c "$path$langPackage"
+        else
+            langPackage="$nameStart${language}.tar.gz"
+            wget -c "$path$langPackage"
+        fi
     fi
 fi
 
