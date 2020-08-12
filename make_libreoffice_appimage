@@ -338,68 +338,67 @@ wget -c "$LibODownloadLink"
 
 if [[ $language != "N" ]] ; then
     if [[ $pathVersion == *"daily"* ]] ; then
-        nameStart="${package%.tar.gz}_langpack_"
+        langStart="${package%.tar.gz}_langpack_"
     else
-        nameStart="LibreOffice_${nrVersion}_Linux_${arch}_deb_langpack_"
+        langStart="LibreOffice_${nrVersion}_Linux_${arch}_deb_langpack_"
     fi
     if [[ $language == *"standard"* ]] ; then
-        for element in ${standard[*]};
-            do
-               langPackage="$nameStart$element.tar.gz"
-               wget -c "$path$langPackage"
-            done
+        for element in ${standard[*]}; do
+            langPackage="$langStart$element.tar.gz"
+            wget -c "$path$langPackage"
+        done
     elif [[ $language == *"full"* ]] ; then
-        for element in ${full[*]};
-            do
-               langPackage="$nameStart$element.tar.gz"
-               wget -c "$path$langPackage"
-            done
+        for element in ${full[*]}; do
+            langPackage="$langStart$element.tar.gz"
+            wget -c "$path$langPackage"
+        done
     else
         if [[ $pathVersion == "3."* ]] ; then
             langPackage="LibO_${nrVersion}_Linux_${arch}_langpack-deb_${language}.tar.gz"
             wget -c "$path$langPackage"
         else
-            langPackage="$nameStart${language}.tar.gz"
+            langPackage="$langStart${language}.tar.gz"
             wget -c "$path$langPackage"
         fi
     fi
 fi
 
 if [[ $optHelp == *"Y"* ]] ; then
+    if [[ $pathVersion == *"daily"* ]] ; then
+        helpStart="${package%.tar.gz}_helppack_"
+    else
+        helpStart="LibreOffice_${nrVersion}_Linux_${arch}_deb_helppack_"
+    fi
     if [[ $language == *"standard"* ]] ; then
-	     for element in ${standard[*]};
-             do
-                helpPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_helppack_$element.tar.gz"
-                wget -c "$path$helpPackage"
+         for element in ${standard[*]}; do
+            helpPackage="$helpStart$element.tar.gz"
+            wget -c "$path$helpPackage"
          done
     elif [[ $language == *"full"* ]] ; then
-	     for element in ${full[*]};
-             do
-               helpPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_helppack_$element.tar.gz"
-               wget -c "$path$helpPackage"
+         for element in ${full[*]}; do
+            helpPackage="$helpStart$element.tar.gz"
+            wget -c "$path$helpPackage"
          done
     else
-			 if [[ $pathVersion == "3."* ]] ; then
-           if [[ $language != "N" ]] ; then
-						   helpPackage="LibO_${nrVersion}_Linux_${arch}_helppack-deb_${language}.tar.gz"
-						   wget -c "$path$helpPackage"
-				   else
-						   helpPackage="LibO_${nrVersion}_Linux_${arch}_helppack-deb_en-US.tar.gz"
-						   wget -c "$path$helpPackage"
-					 fi
-			 else
-				   if [[ $language != "N" ]] ; then
-						   helpPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_helppack_${language}.tar.gz"
-						   wget -c "$path$helpPackage"
-				   else
-						   helpPackage="LibreOffice_${nrVersion}_Linux_${arch}_deb_helppack_en-US.tar.gz"
-						   wget -c "$path""$helpPackage"
-					 fi
-			 fi
+        if [[ $pathVersion == "3."* ]] ; then
+            if [[ $language != "N" ]] ; then
+                helpPackage="LibO_${nrVersion}_Linux_${arch}_helppack-deb_${language}.tar.gz"
+                wget -c "$path$helpPackage"
+            else
+                helpPackage="LibO_${nrVersion}_Linux_${arch}_helppack-deb_en-US.tar.gz"
+                wget -c "$path$helpPackage"
+            fi
+        else
+            if [[ $language != "N" ]] ; then
+                helpPackage="$helpStart${language}.tar.gz"
+                wget -c "$path$helpPackage"
+            else
+                helpPackage="${helpStart}en-US.tar.gz"
+                wget -c "$path$helpPackage"
+            fi
+        fi
     fi
 fi
-
-
 
 for i in *.tar.gz; do tar xfvz "$i"; done
 
