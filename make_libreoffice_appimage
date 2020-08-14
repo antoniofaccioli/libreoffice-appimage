@@ -449,7 +449,7 @@ fi
 set -x
 
 if [[ $optSignature == "Y" ]] ; then
-	for i in $(find . -name "*.AppImage*" -print;); do gpg2 -b --armor --passphrase "$gpgPass" "${i}"; done || true
+	for i in $(find . -name "*.AppImage*" -print;); do gpg2 -b --batch --armor --passphrase "$gpgPass" "${i}"; done || true
 fi
 
 mkdir -p ../out/ || true
