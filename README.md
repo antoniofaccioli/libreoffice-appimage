@@ -54,6 +54,10 @@ The script takes 6 parameters:
 
 ## FAQ
 
+**Can I download appimage packages for Libreoffice?**
+
+Yes, you can find a dedicated page on the official website https://www.libreoffice.org/download/appimage/ with the basic packages otherwise you can go download other versions via https://libreoffice.soluzioniopen.com/
+
 **Can I trust this script?**
 
 Check it out. The code is here. If you have a question, ask on IRC in channels [#AppImage](https://webchat.freenode.net/?channels=appimage) or [#libreoffice-appimage](https://webchat.freenode.net/?channels=libreoffice-appimage).
