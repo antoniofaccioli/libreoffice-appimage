@@ -440,9 +440,17 @@ if [[ $optSync == "N" ]] ; then
 	VERSION=$VERSION ./appimagetool -v ./$APP.AppDir/
 else
     if [[ $language == "N" ]] ; then
-    	VERSION="$pathVersion" ./appimagetool -u zsync|"$linkZsync$APP"-"$pathVersion".AppImage.zsync -v ./$APP.AppDir/
+    	if [[ $optHelp == "Y" ]] ; then
+    		VERSION="$pathVersion"."help" ./appimagetool -u "zsync|"$linkZsync$APP"-"$pathVersion".help.AppImage.zsync" -v ./$APP.AppDir/
+        else
+        	VERSION="$pathVersion" ./appimagetool -u "zsync|"$linkZsync$APP"-"$pathVersion".AppImage.zsync" -v ./$APP.AppDir/
+        fi
     else
-        VERSION="$pathVersion"."$language" ./appimagetool -u zsync|"$linkZsync$APP"-"$pathVersion"."$language".AppImage.zsync -v ./$APP.AppDir/
+    	if [[ $optHelp == *"Y"* ]] ; then
+        	VERSION="$pathVersion"."$language"."help" ./appimagetool -u "zsync|"$linkZsync$APP"-"$pathVersion"."$language".help.AppImage.zsync" -v ./$APP.AppDir/
+        else
+        	VERSION="$pathVersion"."$language" ./appimagetool -u "zsync|"$linkZsync$APP"-"$pathVersion"."$language".AppImage.zsync" -v ./$APP.AppDir/
+    	fi
     fi
 fi
 
