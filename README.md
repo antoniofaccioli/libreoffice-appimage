@@ -26,11 +26,10 @@ The script takes 6 parameters:
    - `'full'`:  creates a package with ALL the languages supported by the project, namely: *af, am, ar, as, ast, be, bg, bn-IN, bn, bo, br, brx, bs, ca-valencia, ca, cs, cy, da, de, dgo, dz, el, en-GB, en-ZA, eo, es, et, eu, fa, fi, fr, ga, gd, gl, gu, gug, he, hi, hr, hsb, hu, id, is, it, ja, ka, kk, km, kmr, kn, ko, kok, ks, lb, lo, lt, lv, mai, mk, ml, mn, mni, mr, my, nb, ne, nl, nn, nr, nso, oc, om, or, pa-IN, pl, pt-BR, pt, qtz, ro, ru, rw, sa-IN, sat, sd, si, sid, sk, sl, sq, sr-Latn, sr, ss, st, sv, sw-TZ, ta, te, tg, th, tn, tr, ts, tt, ug, uk, uz, ve, vec, vi, xh, zh-CN, zh-TW, zu*;
    - `'<single>'`:  one single extra language code out of those supported by the project (for full list see above), f.e. `it`;
    - `'N'`:  no extra language at all; the package will contain support for the default language only (which is `en-US`).
-   
+
 4. **Fourth:** request to package (or not) the offline help into the bundle. This the offline help language will be the same as selected for the third parameter above:
    - `'Y'`:  yes, embed the offline help in the AppImage;
-   - `'N'`:  no, do NOT embed the offline help in the AppImage.    
-<sub>(Note: at this time the bundling of offline help into AppImages from the *'`daily`'* channel are not supported. A `'Y'` in this case will build an AppImage without the offline help.)</sub>
+   - `'N'`:  no, do NOT embed the offline help in the AppImage.
 
 5. **Fifth:**  specify if you want (or not) to be able to make the package updateable. (This additionally creates a *zsync* file, which is used to handle "differential" downloads, so an update does not have to fetch a *complete* AppImage file, but only those byte-ranges which have changed). For this option to work, the [zsync-curl](https://github.com/AppImage/zsync-curl) tool must be present on the system. Possible values are:
    - `'Y'`:  yes, make the AppImage updateable;
@@ -76,11 +75,11 @@ Do you trust the LibreOffice code you run, if it is installed from RPM or DEB pa
 
 * One thing you can do, while the AppImage runs:
   In a terminal, run
-  
+
       mount | grep \.mount_Lib
-  
+
   This will reveal the (temporary) mount point where the AppImage filesystem is (read-only) mounted while LibreOffice runs. You can move into that directory freely and look around and even copy files to someplace outside the AppImage. Then you can keep investigating them when the AppImage does not run any more, once you closed down LibreOffice....
-  
+
 **Can I create different versions of LibreOffice AppImages and store them on the same system?**
 
 Yes.
