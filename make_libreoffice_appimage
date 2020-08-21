@@ -16,13 +16,14 @@ argv3="${3}"
 argv4="${4}"
 argv5="${5}"
 argv6="${6}"
+argv7="${7}"
 
 # Describe usage:
 usage() {
     echo ""
     echo " Build an \"single-file\" AppImage executable for any (arbitrary) version of LibreOffice from The Document Foundation's official binary Debian package."
     echo ""
-    echo " Usage:  ${argv0}  <version>  <arch>  <lang>  <help-yesno>  <zsync-yesno>  <sign-yesno>"
+    echo " Usage:  ${argv0}  <version>  <arch>  <lang>  <help-yesno>  <zsync-yesno>  <sign-yesno> <portable-yesno>"
     echo ""
     echo "   where:"
     echo "             <version>: 'fresh':   build from 'fresh' release channel (i.e. the latest official release)"
@@ -44,8 +45,10 @@ usage() {
     echo ""
     echo "             <sign-yesno>:  'Y' or 'N' (Yes/No to include a GPG signature)"
     echo ""
-    echo "   Example:  \"${argv0} still x86-64 it N N N\""
-    echo "             Build LO AppImage package with Italian language-pack, without offline help, not auto-updateable, without signing the package."
+    echo "             <portable-yesno>: 'Y' or 'N' (Yes/No to include portable function)"
+    echo ""
+    echo "   Example:  \"${argv0} still x86-64 it N N N N\""
+    echo "             Build LO AppImage package with Italian language-pack, without offline help, not auto-updateable, without signing the package, ."
     echo ""
     echo "   Example:  \"${argv0} daily x86-64 de Y Y N\""
     echo "             Build LO AppImage package (development version) with German language-pack, with (German) offline help, updateable via zsync, without signing the package."
@@ -140,14 +143,28 @@ check() {   # This is not a complete, but only a limited sanity check of the inp
             exit 0
             ;;
     esac
+
+    case $argv7 in
+        Y|N)
+            # Do nothing, accepted!
+            echo "    -- with portable for package = \"${argv7}\";"
+            ;;
+        *)
+            echo "==> Wrong argument ${argv7} at position no. 7! (Must be either 'Y' or 'N' to include portable function or not... <=="
+            echo "For correct usage of ${argv0} please see below:"
+            echo ""
+            usage
+            exit 0
+            ;;
+    esac
 }
 
 # Check number of arguments:
 case $# in
-    6)
+    7)
         check
         ;;
-    0|1|2|3|4|5|*)
+    0|1|2|3|4|5|6|*)
         echo "==> Wrong number of arguments! (Used: ${#}) <=="
         echo "For correct usage of ${argv0} please see below:"
         echo ""
@@ -170,7 +187,7 @@ function newestmaster() {
     # Key is relative path to file, value is date
     local -n ar=$1
     local max=0
-    local filepath=""    
+    local filepath=""
     for i in "${!ar[@]}" ; do
         timestamp=$(todate "${ar[$i]}")
         (("$timestamp" > max)) && max="$timestamp" && filepath="$i"
@@ -198,6 +215,7 @@ language="${3:-N}"
 optHelp="${4:-N}"
 optSync="${5:-N}"
 optSignature="${6:-N}"
+optPortable="${7:-Y}"
 
 linkZsync=""
 gpgPass=""
@@ -406,7 +424,11 @@ cd $APP.AppDir/ || exit
 
 find ../ -name "*.deb" -exec dpkg -x \{\} . \;
 
-find . -type f -iname "bootstraprc" -exec sed -i "s|^UserInstallation=.*|UserInstallation=\$SYSUSERCONFIG/libreoffice/$nrVersion|g" {} +
+if [[ $optPortable != "N" ]] ; then
+
+     find . -type f -iname "bootstraprc" -exec sed -i "s|^UserInstallation=.*|UserInstallation=\$SYSUSERCONFIG/libreoffice/$nrVersion|g" {} +
+
+fi
 
 find . -name startcenter.desktop -exec cp \{\} . \;
 
