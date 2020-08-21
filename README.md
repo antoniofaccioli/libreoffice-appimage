@@ -35,21 +35,26 @@ The script takes 6 parameters:
    - `'Y'`:  yes, make the AppImage updateable;
    - `'N'`:  no, do NOT make the AppImage updateable.
 
-6. **Sixth:** indicate whether you want to sign the created package. You need to install the GPG tool on your system and create your own signature. If you use this function you need to put a fill the (by default empty) `$gpgPass` variable inside the script with the passphrase as its value. Possible values are:
+6. **Sixth:** indicate whether you want to sign the created package. You need to install the GPG tool on your system and create your own signature. **If you use this function you need to put a fill the (by default empty) `$gpgPass` variable inside the script with the passphrase as its value.** Possible values are:
    - `'Y'`:  yes, sign the AppImage;
    - `'N'`:  no, do NOT sign the AppImage.
+
+7. **Seventh:** indicate whether you want to use a specific profile folder for the package or use the default LibreOffice configuration.
+The possible parameters are:
+   - `'Y'`:  yes, use a specific profile folder;
+   - `'N'`:  no, LibreOffice default configuration is maintained.
 
 
 ## Examples
 
-**Example 1:**  **`../make_libreoffice_appimage still x86-64 it N N N`**
-             Build LO AppImage package with Italian language-pack, without offline help, not auto-updateable, without signing the package.
+**Example 1:**  **`../make_libreoffice_appimage still x86-64 it N N N N`**
+             Build LO AppImage package with Italian language-pack, without offline help, not auto-updateable, without signing the package, not portable.
 
-**Example 2:**  **`../make_libreoffice_appimage daily x86-64 de Y Y N`**
-             Build LO AppImage package (development version) with German language-pack, with (German) offline help, updateable via zsync, without signing the package.
+**Example 2:**  **`../make_libreoffice_appimage daily x86-64 de Y Y N Y`**
+             Build LO AppImage package (development version) with German language-pack, with (German) offline help, updateable via zsync, without signing the package, portable.
 
-**Example 3:**  **`../make_libreoffice_appimage 3.5.7.2 x86-64 standard Y N N`**
-             Build LO v3.5.7.2 AppImage package with a set of selected language-packs, with offline help (for selected languages), not auto-updateable, without signing the package.
+**Example 3:**  **`../make_libreoffice_appimage 3.5.7.2 x86-64 standard Y N N N`**
+             Build LO v3.5.7.2 AppImage package with a set of selected language-packs, with offline help (for selected languages), not auto-updateable, without signing the package, not portable.
 
 ## FAQ
 
