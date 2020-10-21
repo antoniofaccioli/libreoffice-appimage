@@ -388,7 +388,7 @@ if [[ $optHelp == *"Y"* ]] ; then
         helpStart="LibreOffice_${nrVersion}_Linux_${arch}_deb_helppack_"
     fi
     if [[ $language == *"standard"* ]] ; then
-         for element in ${standard[*]}; do
+         for element in ${standard[0]}; do  #help for 1st language only # WAS: for element in ${standard[*]}; do
             helpPackage="$helpStart$element.tar.gz"
             wget -c "$path$helpPackage"
          done
