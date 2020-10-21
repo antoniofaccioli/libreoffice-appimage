@@ -27,7 +27,7 @@ The script takes 6 parameters:
    - `'<single>'`:  one single extra language code out of those supported by the project (for full list see above), f.e. `it`;
    - `'N'`:  no extra language at all; the package will contain support for the default language only (which is `en-US`).
 
-4. **Fourth:** request to package (or not) the offline help into the bundle. This the offline help language will be the same as selected for the third parameter above:
+4. **Fourth:** request to package (or not) the offline help into the bundle. For `'standard'` language pack, this is only for the first language, else the offline help language will be the same as selected for the third parameter above:
    - `'Y'`:  yes, embed the offline help in the AppImage;
    - `'N'`:  no, do NOT embed the offline help in the AppImage.
 
