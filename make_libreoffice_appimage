@@ -328,7 +328,7 @@ else
 	package="LibO_${nrVersion}_Linux_${arch}_install-deb_en-US.tar.gz"
     else
         nrVersion=$libreVersion
-	path="https://download.documentfoundation.org/libreoffice/old/${nrVersion}/deb/${pathArch}/"
+	path="https://downloadarchive.documentfoundation.org/libreoffice/old/${nrVersion}/deb/${pathArch}/"
 	package="LibreOffice_${nrVersion}_Linux_${arch}_deb.tar.gz"
     fi
 fi
