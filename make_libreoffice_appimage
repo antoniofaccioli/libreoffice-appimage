@@ -18,6 +18,7 @@ argv5="${5}"
 argv6="${6}"
 argv7="${7}"
 
+everylang="af|am|ar|as|ast|be|bg|bn-IN|bn|bo|br|brx|bs|ca-valencia|ca|cs|cy|da|de|dgo|dz|el|en-GB|en-ZA|eo|es|et|eu|fa|fi|fr|ga|gd|gl|gu|gug|he|hi|hr|hsb|hu|id|is|it|ja|ka|kk|km|kmr|kn|ko|kok|ks|lb|lo|lt|lv|mai|mk|ml|mn|mni|mr|my|nb|ne|nl|nn|nr|nso|oc|om|or|pa-IN|pl|pt-BR|pt|qtz|ro|ru|rw|sa-IN|sat|sd|si|sid|sk|sl|sq|sr-Latn|sr|ss|st|sv|sw-TZ|ta|te|tg|th|tn|tr|ts|tt|ug|uk|uz|ve|vec|vi|xh|zh-CN|zh-TW|zu"
 # Describe usage:
 usage() {
     echo ""
@@ -37,9 +38,10 @@ usage() {
     echo "             <lang>: 'standard':   includes en-GB, it, ar, zh-CN, zh-TW, fr, de, ja, ko, pt, pt-BR, es, ru language-packs"
     echo "                         'full':   includes all available language-packs (for some releases more than 113 different ones!)"
     echo "                            'N':   no extra language-pack (LibreOffice comes with default 'en-US')"
-    echo "                       <single>:   includes the named language-pack (for example 'de', 'it' or 'es')"
+    echo "                       <custom>:   includes one or more comma separated language-packs (for example 'de' or 'it,es')"
     echo ""
-    echo "             <help-yesno>:  'Y' or 'N' (Yes/No to include online help -- depends on the previous '<lang>' parameter)"
+    echo "             <help-yesno>:  'Y' or 'N' (Yes/No to include online help for each language pack installed for the previous '<lang>' parameter)"
+    echo "                       <custom>:   includes help for one or more comma separated languages (for example 'de' or 'it,es')"
     echo ""
     echo "             <zsync-yesno>: 'Y' or 'N' (Yes/No to include capability for updating the AppImage with the help of 'AppImageUpdate')"
     echo ""
@@ -93,28 +95,62 @@ check() {   # This is not a complete, but only a limited sanity check of the inp
         N)
             echo "    -- without any extra localization language;"
             ;;
-        af|am|ar|as|ast|be|bg|bn-IN|bn|bo|br|brx|bs|ca-valencia|ca|cs|cy|da|de|dgo|dz|el|en-GB|en-ZA|eo|es|et|eu|fa|fi|fr|ga|gd|gl|gu|gug|he|hi|hr|hsb|hu|id|is|it|ja|ka|kk|km|kmr|kn|ko|kok|ks|lb|lo|lt|lv|mai|mk|ml|mn|mni|mr|my|nb|ne|nl|nn|nr|nso|oc|om|or|pa-IN|pl|pt-BR|pt|qtz|ro|ru|rw|sa-IN|sat|sd|si|sid|sk|sl|sq|sr-Latn|sr|ss|st|sv|sw-TZ|ta|te|tg|th|tn|tr|ts|tt|ug|uk|uz|ve|vec|vi|xh|zh-CN|zh-TW|zu)
+        "$everylang")
             echo "    -- with localization language \"${argv3}\";"
             ;;
         *)
-            echo "==> Wrong or unsupported language request ${argv3} in argument no.3. <=="
-            echo "For correct usage of ${argv0} please see below:"
-            echo ""
-            usage
-            exit 0
+            if [ -z "$argv3" ]
+            then
+                echo "==> Wrong or unsupported language request '${argv3}' in argument no.3. <=="
+                echo "For correct usage of ${argv0} please see below:"
+                echo ""
+                usage
+                exit 0
+            fi
+            for lang in ${argv3//,/ }
+            do
+                for available in ${everylang//|/ }
+                do
+                    [ "$lang" = "$available" ] && continue 2
+                done
+                echo "==> Wrong or unsupported language request '${lang}' in argument no.3. <=="
+                echo "For correct usage of ${argv0} please see below:"
+                echo ""
+                usage
+                exit 0
+            done
+            echo "    -- with localization language(s) \"${argv3}\";"
             ;;
     esac
     case $argv4 in
         Y|N)
             # Do nothing, accepted!
-            echo "    -- include online help = \"${argv4}\";"
+            echo "    -- include offline help = \"${argv4}\";"
             ;;
         *)
-            echo "==> Wrong argument ${argv4} at position no.4! (Must be either 'Y' or 'N' to include offline help or not... <=="
-            echo "For correct usage of ${argv0} please see below:"
-            echo ""
-            usage
-            exit 0
+            if [ -z "$argv4" ]
+            then
+                echo "==> Wrong or unsupported help language request '${argv4}' in argument no.4. <=="
+                echo "==> Must be either 'Y', 'N' or a comma separated list of languages to include <=="
+                echo "For correct usage of ${argv0} please see below:"
+                echo ""
+                usage
+                exit 0
+            fi
+            for helplang in ${argv4//,/ }
+            do
+                for available in ${everylang//|/ }
+                do
+                    [ "$helplang" = "$available" ] && continue 2
+                done
+                echo "==> Wrong or unsupported help language request '${helplang}' in argument no.4. <=="
+                echo "==> Must be either 'Y', 'N' or a comma separated list of languages to include <=="
+                echo "For correct usage of ${argv0} please see below:"
+                echo ""
+                usage
+                exit 0
+            done
+            echo "    -- include offline help language(s) \"${argv4}\";"
             ;;
     esac
     case $argv5 in
@@ -220,8 +256,26 @@ optPortable="${7:-Y}"
 linkZsync=""
 gpgPass=""
 
-standard=(en-GB it ar zh-CN zh-TW fr de ja ko pt pt-BR es ru)
-full=(af am ar as ast be bg bn-IN bn bo br brx bs ca-valencia ca cs cy da de dgo dz el en-GB en-ZA eo es et eu fa fi fr ga gd gl gu gug he hi hr hsb hu id is it ja ka kk km kmr kn ko kok ks lb lo lt lv mai mk ml mn mni mr my nb ne nl nn nr nso oc om or pa-IN pl pt-BR pt qtz ro ru rw sa-IN sat sd si sid sk sl sq sr-Latn sr ss st sv sw-TZ ta te tg th tn tr ts tt ug uk uz ve vec vi xh zh-CN zh-TW zu)
+if [[ $language == *"standard"* ]] ; then
+    languages=(en-GB it ar zh-CN zh-TW fr de ja ko pt pt-BR es ru)
+elif [[ $language == *"full"* ]] ; then
+    languages=(${everylang//|/ })
+elif [[ $language != "N" ]] ; then
+    languages=(${argv3//,/ })
+        # avoid long language lists in VERSION; and commas like in "fr,de"
+        # cause "LibreOffice-$VERSION.AppImage --appimage-mount" to fail
+    [ "${#languages[@]}" -le 4 ] && language="${language//,/_}" || language="custom"
+else
+    languages=()
+fi
+
+if [[ $optHelp == *"Y"* ]] ; then
+    helplanguages=("${languages[@]}")
+elif [[ $optHelp != "N" ]] ; then
+    helplanguages=(${argv4//,/ })
+else
+    helplanguages=()
+fi
 
 if [[ $arch == *"x86-64"* ]] ; then
     pathArch="x86_64"
@@ -335,7 +389,7 @@ fi
 
 LibODownloadLink=$path$package
 
-if [[ $optHelp == *"Y"* ]] ; then
+if [[ $optHelp != "N" ]] ; then
 	 if [[ $language != "N" ]] ; then
 	   VERSION="${nrVersion}.$language.help"
   	 else
@@ -360,56 +414,54 @@ if [[ $language != "N" ]] ; then
     else
         langStart="LibreOffice_${nrVersion}_Linux_${arch}_deb_langpack_"
     fi
-    if [[ $language == *"standard"* ]] ; then
-        for element in ${standard[*]}; do
-            langPackage="$langStart$element.tar.gz"
-            wget -c "$path$langPackage"
-        done
-    elif [[ $language == *"full"* ]] ; then
-        for element in ${full[*]}; do
+    if [[ $language == *"standard"* || $language == *"full"* ]] ; then
+        for element in ${languages[*]}; do
             langPackage="$langStart$element.tar.gz"
             wget -c "$path$langPackage"
         done
     else
         if [[ $pathVersion == "3."* ]] ; then
-            langPackage="LibO_${nrVersion}_Linux_${arch}_langpack-deb_${language}.tar.gz"
-            wget -c "$path$langPackage"
+            for element in ${languages[*]}; do
+                langPackage="LibO_${nrVersion}_Linux_${arch}_langpack-deb_${element}.tar.gz"
+                wget -c "$path$langPackage"
+            done
         else
-            langPackage="$langStart${language}.tar.gz"
-            wget -c "$path$langPackage"
+            for element in ${languages[*]}; do
+                langPackage="$langStart${element}.tar.gz"
+                wget -c "$path$langPackage"
+            done
         fi
     fi
 fi
 
-if [[ $optHelp == *"Y"* ]] ; then
+if [[ $optHelp != "N" ]] ; then
     if [[ $pathVersion == *"daily"* ]] ; then
         helpStart="${package%.tar.gz}_helppack_"
     else
         helpStart="LibreOffice_${nrVersion}_Linux_${arch}_deb_helppack_"
     fi
-    if [[ $language == *"standard"* ]] ; then
-         for element in ${standard[*]}; do
-            helpPackage="$helpStart$element.tar.gz"
-            wget -c "$path$helpPackage"
-         done
-    elif [[ $language == *"full"* ]] ; then
-         for element in ${full[*]}; do
+    if [[ $language == *"standard"* || $language == *"full"* ]] ; then
+         for element in ${helplanguages[*]}; do
             helpPackage="$helpStart$element.tar.gz"
             wget -c "$path$helpPackage"
          done
     else
         if [[ $pathVersion == "3."* ]] ; then
-            if [[ $language != "N" ]] ; then
-                helpPackage="LibO_${nrVersion}_Linux_${arch}_helppack-deb_${language}.tar.gz"
-                wget -c "$path$helpPackage"
+            if [[ "${#helplanguages[@]}" != "0" ]] ; then
+                for element in ${helplanguages[*]}; do
+                    helpPackage="LibO_${nrVersion}_Linux_${arch}_helppack-deb_${element}.tar.gz"
+                    wget -c "$path$helpPackage"
+                done
             else
                 helpPackage="LibO_${nrVersion}_Linux_${arch}_helppack-deb_en-US.tar.gz"
                 wget -c "$path$helpPackage"
             fi
         else
-            if [[ $language != "N" ]] ; then
-                helpPackage="$helpStart${language}.tar.gz"
-                wget -c "$path$helpPackage"
+            if [[ "${#helplanguages[@]}" != "0" ]] ; then
+                for element in ${helplanguages[*]}; do
+                    helpPackage="$helpStart${element}.tar.gz"
+                    wget -c "$path$helpPackage"
+                done
             else
                 helpPackage="${helpStart}en-US.tar.gz"
                 wget -c "$path$helpPackage"
@@ -462,13 +514,13 @@ if [[ $optSync == "N" ]] ; then
 	VERSION=$VERSION ./appimagetool -v ./$APP.AppDir/
 else
     if [[ $language == "N" ]] ; then
-    	if [[ $optHelp == "Y" ]] ; then
+    	if [[ $optHelp != "N" ]] ; then
     		VERSION="$pathVersion"."help" ./appimagetool -u "zsync|"$linkZsync$APP"-"$pathVersion".help.AppImage.zsync" -v ./$APP.AppDir/
         else
         	VERSION="$pathVersion" ./appimagetool -u "zsync|"$linkZsync$APP"-"$pathVersion".AppImage.zsync" -v ./$APP.AppDir/
         fi
     else
-    	if [[ $optHelp == *"Y"* ]] ; then
+    	if [[ $optHelp != "N" ]] ; then
         	VERSION="$pathVersion"."$language"."help" ./appimagetool -u "zsync|"$linkZsync$APP"-"$pathVersion"."$language".help.AppImage.zsync" -v ./$APP.AppDir/
         else
         	VERSION="$pathVersion"."$language" ./appimagetool -u "zsync|"$linkZsync$APP"-"$pathVersion"."$language".AppImage.zsync" -v ./$APP.AppDir/
