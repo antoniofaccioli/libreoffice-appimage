@@ -22,7 +22,7 @@ The script takes 6 parameters:
    This parameter can be 'x86' (for 32-bit) or 'x86-64' (for 64-bit).
 
 3. **Third:** request the language pack(s) you want to use with LibreOffice. The following values may be submitted:
-   - `'standard'`: creates a package with a set of pre-defined languages, namely: *nl, en-GB, fr, de*;
+   - `'standard'`: creates a package with a set of pre-defined languages, namely: *en-GB, it, ar, zh-CN, zh-TW, fr, de, ja, ko, pt, pt-BR, es, ru*;
    - `'full'`:  creates a package with ALL the languages supported by the project, namely: *af, am, ar, as, ast, be, bg, bn-IN, bn, bo, br, brx, bs, ca-valencia, ca, cs, cy, da, de, dgo, dz, el, en-GB, en-ZA, eo, es, et, eu, fa, fi, fr, ga, gd, gl, gu, gug, he, hi, hr, hsb, hu, id, is, it, ja, ka, kk, km, kmr, kn, ko, kok, ks, lb, lo, lt, lv, mai, mk, ml, mn, mni, mr, my, nb, ne, nl, nn, nr, nso, oc, om, or, pa-IN, pl, pt-BR, pt, qtz, ro, ru, rw, sa-IN, sat, sd, si, sid, sk, sl, sq, sr-Latn, sr, ss, st, sv, sw-TZ, ta, te, tg, th, tn, tr, ts, tt, ug, uk, uz, ve, vec, vi, xh, zh-CN, zh-TW, zu*;
    - `'<custom>'`:  one or more comma separated language codes out of those supported by the project (for full list see above), f.e. `it` or `de,es`;
    - `'N'`:  no extra language at all; the package will contain support for the default language only (which is `en-US`).
