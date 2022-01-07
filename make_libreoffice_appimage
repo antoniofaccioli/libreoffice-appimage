@@ -63,7 +63,7 @@ usage() {
 
 check() {   # This is not a complete, but only a limited sanity check of the inputs
     case $argv1 in
-        fresh|still|daily|3.*|4.*|5.*|6.*)
+        fresh|still|daily|3.*|4.*|5.*|6.*|7.*)
             # Do nothing, accepted!
             echo -e "\nBuilding LibreOffice AppImage from \"${argv1}\" channel or release:"
             ;;
