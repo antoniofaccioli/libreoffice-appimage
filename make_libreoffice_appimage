@@ -370,11 +370,11 @@ elif [[ $pathVersion == *"still"* ]] ; then
 elif [[ $pathVersion == *"daily"* ]] ; then
     path="https://dev-builds.libreoffice.org/daily/master/"
     package=$(filtermasters)
-    tmpVersion1="${package%_Linux_x86-64_deb.tar.gz}"
-    tmpVersion1="${tmpVersion1##*LibreOfficeDev_}"
-    tmpVersion2="${package%_[[:digit:]][[:digit:]].*}"
-    tmpVersion2="${tmpVersion2##*master~}"
-    nrVersion=$tmpVersion1"_"$tmpVersion2
+    # construct a string for the appimage file name
+    # that looks like 7.3.0.0.alpha1_2021-10-31
+    [[ $package =~ .+LibreOfficeDev_(.+)_Linux_x86-64_deb\.tar\.gz ]] && tmpVersion="${BASH_REMATCH[1]}"
+    [[ $package =~ [0-9]{4}-[0-9]{2}-[0-9]{2} ]] && tmpDate="${BASH_REMATCH[0]}"
+    nrVersion=$tmpVersion"_"$tmpDate
 else
     if [[ $pathVersion == "3."* ]] ; then
 	nrVersion=$libreVersion
