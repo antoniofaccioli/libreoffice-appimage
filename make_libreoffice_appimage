@@ -360,11 +360,11 @@ esac
 set +e
 
 if [[ $pathVersion == *"fresh"* ]] ; then
-    nrVersion=$(curl "https://www.libreoffice.org/download/download" | grep -o -e "/stable/.*/" | cut -d "/" -f 3 | head -n 1)
+    nrVersion=$(curl "https://www.libreoffice.org/download/download-libreoffice/" | grep -o -e "/stable/.*/" | cut -d "/" -f 3 | head -n 1)
     path="https://download.documentfoundation.org/libreoffice/stable/${nrVersion}/deb/${pathArch}/"
     package="LibreOffice_${nrVersion}_Linux_${arch}_deb.tar.gz"
 elif [[ $pathVersion == *"still"* ]] ; then
-    nrVersion=$(curl "https://www.libreoffice.org/download/download" | grep -o -e "/stable/.*/" | cut -d "/" -f 3 | head -n 3 | tail -n 1)
+    nrVersion=$(curl "https://www.libreoffice.org/download/download-libreoffice/" | grep -o -e "/stable/.*/" | cut -d "/" -f 3 | head -n 3 | tail -n 1)
     path="https://download.documentfoundation.org/libreoffice/stable/${nrVersion}/deb/${pathArch}/"
     package="LibreOffice_${nrVersion}_Linux_${arch}_deb.tar.gz"
 elif [[ $pathVersion == *"daily"* ]] ; then
